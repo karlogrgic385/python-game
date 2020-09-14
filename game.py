@@ -6,8 +6,6 @@ import player, sprite, game_controls
 windowWidth = 768
 windowHeight =  432
 grassHeight = int(windowHeight * (2 / 3))
-charInitX = 0
-charInitY = grassHeight
 gameFPS = 30 
 charVel = 5
 cloudVel = 1
@@ -17,6 +15,11 @@ gameTimer = None
 backgroundColour = (38, 146, 255)
 charImg = pygame.image.load("assets/images/mainChar.bmp")
 grassImg = pygame.image.load("assets/images/grass.bmp")
+charSize = charImg.get_size()
+charInitX = 0
+charInitY = grassHeight - charSize[1]
+dx = charInitX
+dy = charInitY
 
 def initGame(wHei, wWid):
     global gameTimer
@@ -30,24 +33,31 @@ def initGame(wHei, wWid):
         for y in range(grassHeight, windowHeight, 25):
             gameWin.blit(grassImg, (x, y))
 
-def movePlayer(pImg, x, y, d):
+def movePlayer(pImg, pComm, x, y, d):
     pRect = pImg.get_rect()
-    dx = pRect.x
+    currX = pRect.x
+    currY = pRect.y
+    dx = currX
+    dy = currY
 
-charInitY = charInitY - charImg.get_size()[1]
+    if pComm == "moveRight" and currX <= (windowWidth-0.5*charSize[0]):
+        dx = currX + d
+    elif pComm == "moveLeft" and currX >= 0.5*charSize[0]:
+        dx = currX - d
+    elif pComm == "Jump" and currY <= (windowWidth-0.5*charSize[1]):
+        dy = currY + d
+    elif pComm == "duckDown" and currY >= charInitY:
+        dy = currY - d 
+
 initGame(windowHeight, windowWidth)
-
 while True:
-    gameWin.blit(charImg, (0, charInitY))
-
     for event in pygame.event.get():
         userCommand = game_controls.checkCommand(event)
-        print(userCommand)
+        if userCommand:
+            movePlayer(charImg, userCommand, charInitX, charInitY, charVel)
     
-    if userCommand:
-        movePlayer(charImg, charInitX, charInitY, charVel)
-
     #gameWin.blit() 
     # Update the display
+    gameWin.blit(charImg, (dx, dy))
     pygame.display.update()
     gameTimer.tick(gameFPS)
