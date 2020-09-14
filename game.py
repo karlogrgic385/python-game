@@ -42,6 +42,7 @@ while True:
 
     for event in pygame.event.get():
         userCommand = game_controls.checkCommand(event)
+        print(userCommand)
     
     if userCommand:
         movePlayer(charImg, charInitX, charInitY, charVel)

@@ -1,4 +1,4 @@
-def mainChar(cImg, cx, cy):
+def mainChar(cImg, cX, cY):
     main_char_rect = cImg.get_rect()
     
-    return (cx, cy)
+    return (cX, cX)
